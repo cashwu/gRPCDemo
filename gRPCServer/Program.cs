@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Grpc.Auth;
 using Grpc.Core;
 using GRPCDemo;
 
@@ -13,6 +15,9 @@ namespace gRPCServer
         public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
         {
             Console.WriteLine($"request msg :: {request.Name}");
+
+            Thread.Sleep(1000);
+
             return Task.FromResult(new HelloReply { Message = $"Hello {request.Name}" });
         }
     }
