@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,6 +33,32 @@ namespace gRPCServer
             }
 
             return Task.FromResult(new HelloReply { Message = $"Hello {requestStream.Current.Name}" });
+        }
+
+        private static HashSet<IServerStreamWriter<HelloReply>> _responseStreams 
+            = new HashSet<IServerStreamWriter<HelloReply>>();
+
+        public override async Task Test2(IAsyncStreamReader<HelloRequest> requestStream,
+            IServerStreamWriter<HelloReply> responseStream,
+            ServerCallContext context)
+        {
+            _responseStreams.Add(responseStream);
+
+            while (requestStream.MoveNext(CancellationToken.None).Result)
+            {
+                var client = requestStream.Current;
+                Console.WriteLine($" client msg :: {client.Name} ");
+
+                var msg = new HelloReply
+                {
+                    Message = $" response msg :: Hola - {client.Name} "
+                };
+
+                foreach (var stream in _responseStreams)
+                {
+                    stream.WriteAsync(msg).Wait();
+                }
+            }
         }
     }
 
