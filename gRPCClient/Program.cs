@@ -28,17 +28,18 @@ namespace gRPCClient
             while (true)
             {
                 var call = client.Test(withWaitForReady);
+
+                var request = new List<HelloRequest>(); 
                 for (int i = 0; i < 10; i++)
                 {
-                    call.RequestStream.WriteAsync(new HelloRequest { Name = $" cash {i:00} " }).Wait();
+                    request.Add(new HelloRequest {Name = $" cash {i:00} "});
                 }
 
-                call.RequestStream.CompleteAsync();
+                call.RequestStream.WriteAllAsync(request).Wait();
                 Console.WriteLine(" stream complete ");
 
                 Thread.Sleep(2000);
             }
-            Console.ReadKey();
         }
     }
 }
