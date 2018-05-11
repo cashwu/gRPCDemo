@@ -6,6 +6,7 @@ package gRPCDemo;
 
 service gRPC {
 	rpc SayHello (HelloRequest) returns (HelloReply) {}
+	rpc Test (stream HelloRequest) returns (HelloReply) {}
 }
 
 message HelloRequest {

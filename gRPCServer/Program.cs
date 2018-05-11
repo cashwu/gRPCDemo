@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Auth;
 using Grpc.Core;
+using Grpc.Core.Utils;
 using GRPCDemo;
 
 namespace gRPCServer
@@ -20,6 +21,18 @@ namespace gRPCServer
 
             return Task.FromResult(new HelloReply { Message = $"Hello {request.Name}" });
         }
+
+        public override Task<HelloReply> Test(IAsyncStreamReader<HelloRequest> requestStream, ServerCallContext context)
+        {
+            var r = requestStream.ToListAsync().Result;
+
+            foreach (var i in r)
+            {
+                Console.WriteLine($"request msg :: {i.Name}");
+            }
+
+            return Task.FromResult(new HelloReply { Message = $"Hello {requestStream.Current.Name}" });
+        }
     }
 
     class Program
@@ -30,8 +43,8 @@ namespace gRPCServer
         {
             Server server = new Server
             {
-                Services = {gRPC.BindService(new gRPCImpl())},
-                Ports = {new ServerPort("localhost", Port, ServerCredentials.Insecure)}
+                Services = { gRPC.BindService(new gRPCImpl()) },
+                Ports = { new ServerPort("localhost", Port, ServerCredentials.Insecure) }
             };
 
             server.Start();

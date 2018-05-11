@@ -22,6 +22,13 @@ namespace GRPCDemo {
         __Marshaller_HelloRequest,
         __Marshaller_HelloReply);
 
+    static readonly grpc::Method<global::GRPCDemo.HelloRequest, global::GRPCDemo.HelloReply> __Method_Test = new grpc::Method<global::GRPCDemo.HelloRequest, global::GRPCDemo.HelloReply>(
+        grpc::MethodType.ClientStreaming,
+        __ServiceName,
+        "Test",
+        __Marshaller_HelloRequest,
+        __Marshaller_HelloReply);
+
     /// <summary>Service descriptor</summary>
     public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
     {
@@ -32,6 +39,11 @@ namespace GRPCDemo {
     public abstract partial class gRPCBase
     {
       public virtual global::System.Threading.Tasks.Task<global::GRPCDemo.HelloReply> SayHello(global::GRPCDemo.HelloRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      public virtual global::System.Threading.Tasks.Task<global::GRPCDemo.HelloReply> Test(grpc::IAsyncStreamReader<global::GRPCDemo.HelloRequest> requestStream, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -77,6 +89,14 @@ namespace GRPCDemo {
       {
         return CallInvoker.AsyncUnaryCall(__Method_SayHello, null, options, request);
       }
+      public virtual grpc::AsyncClientStreamingCall<global::GRPCDemo.HelloRequest, global::GRPCDemo.HelloReply> Test(grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return Test(new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      public virtual grpc::AsyncClientStreamingCall<global::GRPCDemo.HelloRequest, global::GRPCDemo.HelloReply> Test(grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncClientStreamingCall(__Method_Test, null, options);
+      }
       /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
       protected override gRPCClient NewInstance(ClientBaseConfiguration configuration)
       {
@@ -89,7 +109,8 @@ namespace GRPCDemo {
     public static grpc::ServerServiceDefinition BindService(gRPCBase serviceImpl)
     {
       return grpc::ServerServiceDefinition.CreateBuilder()
-          .AddMethod(__Method_SayHello, serviceImpl.SayHello).Build();
+          .AddMethod(__Method_SayHello, serviceImpl.SayHello)
+          .AddMethod(__Method_Test, serviceImpl.Test).Build();
     }
 
   }
